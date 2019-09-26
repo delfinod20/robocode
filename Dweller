@@ -1,0 +1,61 @@
+#include <kipr/botball.h>
+
+//declare variables
+int l_motor= 3; //left motor
+int r_motor= 0; //right motor 
+int speed= 50;  //speed
+int reverse= -50;  //speed
+int counter=0; //counter
+
+
+int main()
+{
+    shut_down_in(300.0);
+    while(1){//as long as the log test is true....
+        foward();//move both foward
+           if(digital(0)==1){     //recognize that it hit something
+               backwards();     //move both motors back
+               spin();               //spin robot
+               counter++;     //counts
+                  }                 
+  		   if(digital(9)==1){     //recognize that it hit something
+               backwards();     //move both motors back
+               spin();               //spin robot
+               counter++;     //counts
+                  }  
+          if(counter==4){ 
+              evasive();
+              counter=0;
+               }
+        }
+    printf("Hello World\n");
+    return 0;
+}
+
+//FUNCTION DEFINITIONS//
+void foward(){
+    motor(r_motor,69);
+    motor(l_motor,81);
+
+}
+void backwards(){
+     motor(r_motor,reverse);
+     motor(l_motor,reverse);
+     msleep(750);
+}
+
+void spin(){
+     motor(r_motor,speed);
+     motor(l_motor,reverse);
+     msleep(850);
+     ao();   //all off
+}
+void evasive(){
+    motor(r_motor,reverse);
+     motor(l_motor,reverse);
+     msleep(1000);
+     motor(r_motor,speed);
+     motor(l_motor,reverse);
+     msleep(1000);
+     ao();   //all off
+    }
