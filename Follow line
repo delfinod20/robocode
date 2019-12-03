@@ -1,0 +1,81 @@
+#include <kipr/botball.h>
+
+//declare variables
+int arm= 0; //servo arm
+int arm_pos= 1500; //servo arm position
+int plow= 500; //servo arm position
+int l_motor= 3; //left motor
+int r_motor= 0; //right motor 
+int r_bump= 0; //right bump
+int l_bump= 9; //left bump
+int r_speed= 10;  //right speed
+int l_speed= 10;  //left speed
+int vr_speed= 90; //veer speed 
+int vl_speed= 90;  //veer speed
+int f_sensor= 4; // front sensor
+int t_sensor= 0; // top hat sensor
+int line= 2600; // value of balck line
+int front= 2320; // Proximity to front wall
+int long_p= 1000;  //long pause
+
+int main()
+{
+    printf("find line\n");
+       findline();
+    ao();
+       followline();
+    	ao();
+       servo();
+       ao();
+    
+    return 0;
+}
+
+//FUNCTION DEFINITIONS//
+void servo(){
+	enable_servos();             //turn on servos
+    set_servo_position(arm,arm_pos);  //move servo to halfway point
+    msleep(l_pause);               //pause to let the servo move
+    set_servo_position(arm,plow);  //move servo 
+    msleep(l_pause);               //pause to let the servo move
+
+    
+    disable_servos();
+    return 0;
+}
+
+void forward(){
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+}
+
+void veer_r(){
+    printf("veer right\n");
+    motor(r_motor,r_speed);//right motor slow
+    motor(l_motor,vr_speed);//left motor fast
+    }
+void veer_l(){
+    printf("veer left\n");
+    motor(r_motor,vl_speed);
+    motor(l_motor,l_speed);
+    }
+void findline(){
+ 	while(analog(t_sensor)<=line){
+        printf("finding line\n");
+        forward(); //move forward
+}
+    ao();
+    printf("found line\n");
+}
+void followline(){  
+        while(analog(f_sensor) <front){
+          forward();//move both forward
+            
+        if(analog(t_sensor) >=line){
+            veer_l(); // 
+        }
+        if(analog(t_sensor) <=line){
+            veer_r(); // If it gets to far it veers
+          }
+        }
+}
