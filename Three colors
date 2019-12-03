@@ -1,0 +1,37 @@
+#include <kipr/botball.h>
+int b_servo= 0; //servo arm
+int t_servo= 3; //front servo arm
+int red= 0; //Channel 0 is red
+int blue= 1;// Channel 1 is green
+int pink= 2; // channel 2 is yellow
+
+int main()
+{
+
+	camera_open_black();
+	while (digital(8) == 0)
+	{
+    	camera_update();
+		if ((get_object_count(red) <= 0)&&(get_object_count(pink) <= 0)&&(get_object_count(blue) <= 0))
+	{
+			printf("No objects detected.\n");
+		}
+		if (get_object_count(red) > 0)
+	{
+			printf("Object is red!\n");
+		}
+        if (get_object_count(blue) > 0)
+	{
+			printf("Object is Blue!\n");
+		}
+        if (get_object_count(pink) > 0)
+	{
+			printf("Object is Pink!\n");
+		}
+	}
+
+	camera_close();
+    printf("Three Colors\n");
+    return 0;
+}
+
