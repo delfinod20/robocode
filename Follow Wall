@@ -1,0 +1,74 @@
+#include <kipr/botball.h>
+
+//declare variables
+int l_motor= 3; //left motor
+int r_motor= 0; //right motor
+int f_sensor= 4; // front sensor
+int s_sensor= 0; // side sensor
+int wall= 2400; // Proximity to side wall 
+int front= 2320; // Proximity to front wall
+int r_speed= 30;  //right speed
+int l_speed= 30;  //left speed
+int v_speed= 70;  //veer speed
+int reverse= -50;  //speed
+int long_p= 3000; //Short pause
+int spin_p= 985; //medium pause
+
+
+int main()
+{
+       printf("looking for wall\n");
+
+           followwall();
+           forward();
+           msleep(spin_p);
+           ao();
+           spin();
+           forward2();
+           followwall();
+  
+    return 0;
+}
+
+//FUNCTION DEFINITIONS//
+void forward(){
+    printf(“moving forward\n”);
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+}
+void forward2(){
+    printf(“moving forward for 3 seconds\n”);
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+    msleep(long_p);
+}
+void veer_r(){
+    printf(“veering right\n”);
+    motor(r_motor,v_speed);
+    motor(l_motor,l_speed);
+    }
+void veer_l(){
+    printf(“veering left\n”);
+    motor(r_motor,r_speed);
+    motor(l_motor,v_speed);
+    }
+void spin(){
+     printf(“turning left left\n”);
+     motor(r_motor,r_speed);
+     motor(l_motor,reverse);
+     msleep(spin_p);
+     ao();   //all off
+}
+
+void followwall(){  
+        while(analog(f_sensor) <=front){
+          forward();//move both forward
+        if(analog(s_sensor) >wall){
+            veer_r(); // If it gets too close to the side, veers
+        }
+        if(analog(s_sensor) <wall){
+            veer_l(); // If it gets to far it veers
+          }
+        }
+}
+  
