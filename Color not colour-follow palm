@@ -1,0 +1,68 @@
+
+#include <kipr/botball.h>
+int b_servo= 0; //servo arm
+int t_servo= 3; //front servo arm
+int red= 0; //Channel 0 is red
+int green= 1;// Channel 1 is green
+int plow= 500; //servo arm position
+int l_motor= 3; //left motor
+int r_motor= 0; //right motor 
+int r_speed= 50;  //right speed
+int l_speed= 50;  //left speed
+int v_speed= 80; //veer speed
+
+int main()
+{
+    camera_open_black();     //opens connection of camera
+    
+       printf("camera On\n");
+    while (digital (8) == 0)
+    {
+        camera_update();
+        if (get_object_count(red) < 1)
+        {
+         printf("No objects detected.\n");
+         }
+        else
+        {
+        if (get_object_center_x(red, 0) < 80)
+        {
+        printf("Red is on the left!\n");
+        veer_l();
+        printf("moving left.\n"); 
+        }
+        if (get_object_center_x(red, 0) >80)
+        {
+        printf("Red is on the right!\n");
+        veer_r();
+        printf("moving right.\n");
+        }
+        if (get_object_center_y(red,0) >90)
+        {
+          printf("Stop\n");
+          ao();
+            break;
+        }
+    }
+}
+    camera_close();
+    
+    return 0;
+}
+
+//FUNCTION DEFINITIONS//
+void forward(){
+    printf("moving forward\n");
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+}
+void veer_r(){
+    printf("veering right\n");
+    motor(r_motor,r_speed);
+    motor(l_motor,v_speed);
+    }
+void veer_l(){
+    printf("veering left\n");
+    motor(r_motor,v_speed);
+    motor(l_motor,l_speed);
+          }
