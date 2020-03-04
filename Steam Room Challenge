@@ -1,0 +1,159 @@
+#include <kipr/botball.h>
+
+//declare variables
+int center= 50;// camera center
+int yellow= 0;// channel 0
+int arm1= 0; //servo arm
+int arm2= 2; // servo arm
+int down= 50; //servo arm position down
+int up= 2000; //servo arm position up
+int l_motor= 3; //left motor
+int r_motor= 0; //right motor
+int t_motor= 1; //top motor
+int f_sensor= 0; // front sensor
+int s_sensor= 4;// side sensor
+int front= 2910; // Proximity to front wall
+int wall=2700;
+int r_speed= 30;  //right speed
+int l_speed= 30;  //left speed
+int v_speed= 40; //veer speed 
+int vr_speed= 80;  //veer speed
+int reverse= -50; //reverse
+int line= 2600; // value of balck line
+int short_p= 100; //Short pause
+int medium_p= 800; //medium pause
+int long_p= 1000;  //long pause
+int xl_long_p= 1500;  //XL pause
+
+
+int main()
+{
+    wait_for_light(0);
+    shut_down_in(120.0);
+    go();
+    forward();
+    msleep(900);
+    ao();
+    enable_servos();
+    msleep(short_p);
+    grab();
+    msleep(short_p);
+    backwards();
+    msleep(short_p);
+    ao();
+	  getup();
+    pull();
+    msleep(short_p);
+    ao();
+    spin();
+    msleep(short_p);
+    ao();    
+    number();
+    
+    printf("SRC\n");
+    return 0;
+}
+//function definitions//
+void forward(){
+    printf("moving forward\n");
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+ 
+}
+void veer_r(){
+    printf("veering right\n");
+    motor(r_motor,r_speed);
+    motor(l_motor,vr_speed);
+    }
+void veer_l(){
+    printf("veering left\n");
+    motor(r_motor,v_speed);
+    motor(l_motor,l_speed);
+          }
+void backwards(){
+    printf("backwards\n");
+    motor(r_motor,reverse);//robot goes backwards 
+    motor(l_motor,reverse);
+    msleep(medium_p);
+    ao();   //all off
+}
+void spin(){
+     motor(r_motor,reverse);
+     motor(l_motor,l_speed);
+     msleep(xl_long_p);
+     ao();   //all off
+}
+void getup(){
+    printf("Going up\n");
+    set_servo_position(0,up);  //move servo up
+    set_servo_position(2,up);  //move servo up
+    msleep(3000);
+    
+	}
+void pull(){
+    printf("pull string\n");
+    motor(t_motor,100);
+    msleep(500);
+	}
+void go(){  
+    printf("go get block\n");
+        while(analog(f_sensor) <=front){//if front sensor is less than 2910 move forward
+          forward();//move both forward
+            if(analog(s_sensor) <wall){
+            veer_r(); // If it gets too close to the side, veers
+        }
+        if(analog(s_sensor) >wall){
+            veer_l(); // If it gets to far it veers
+        }
+            
+        }
+}
+void grab(){
+    printf("grabbing cube\n");
+    set_servo_position(1,1000);  //grabbing cube
+}
+void number(){
+    int counter = 0;
+    camera_open_black();     //opens connection of camera
+    while(counter<10){
+    camera_update();
+    printf("get_object_center_x(yellow)=%d\n",get_object_center_x(yellow,0));
+        counter++;
+        msleep(5);
+    }
+}
+void building(){
+     camera_open_black();     //opens connection of camera
+    
+       printf("camera On\n");
+    while (digital (8) == 0)
+    {
+        camera_update();
+        if (get_object_count(yellow) < 1)
+        {
+         printf("No objects detected.\n");
+         }
+        else
+        {
+        if (get_object_center_x(yellow, 0) < 80)
+        {
+        printf("Red is on the left!\n");
+        veer_l();
+        printf("moving left.\n"); 
+        }
+        if (get_object_center_x(yellow, 0) >80)
+        {
+        printf("Red is on the right!\n");
+        veer_r();
+        printf("moving right.\n");
+        }
+        if (get_object_center_y(yellow,0) >90)
+        {
+          printf("Stop\n");
+          ao();
+            break;
+         camera_close();
+        }
+        }  
+        }
+}
