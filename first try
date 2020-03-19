@@ -1,0 +1,38 @@
+// Created on Thu March 19 2020
+int l_motor= 0; //left motor
+int r_motor= 2; //right motor
+int r_bump= 9; //right bump
+int l_bump= 8; //left bump
+int r_speed= 50;  //right speed
+int l_speed= 50;  //left speed
+int reverse= -30; // reverse
+int pause=500; //pause
+int no_wall=0; //no wall
+
+int main(){
+	 while(digital(r_bump)==no_wall){ //as long as the log test is true, moving forward
+        forward();
+	 }
+		   ao();
+	 while(digital(l_bump)==no_wall){ //as long as the log test is true, spinning around
+		 spin();
+	 }
+	 ao();
+		    
+	printf("Hello, World!\n");
+	return 0;
+
+}
+
+//FUNCTION DEFINITIONS//
+void forward(){
+	printf("moving forward\n");
+    motor(r_motor,r_speed);
+    motor(l_motor,l_speed);
+}
+void spin(){
+	 printf("spinning\n");
+     motor(l_motor,l_speed);
+	 motor(r_motor, reverse);
+     ao();   //all off
+}
