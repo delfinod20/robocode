@@ -1,0 +1,101 @@
+// Created on Mon March 23 2020
+int l_motor= 0; //left motor
+int r_motor= 2; //right motor
+int s_sensor= 5; // side sensor
+int speed= 50;  //speed
+int speed2= 20; //speed 2
+int v_speed= 70; //veer speed
+int r_bump= 9; //right bump
+int l_bump= 8; //left bump
+int reverse= -50;  //speed
+int short_p= 435; //Short pause
+int medium_p= 800; //medium pause
+int long_p= 850;  //long pause
+int xl_long_p= 1500;  //XL pause
+int no_front= 0; //No Wall
+int front= 1; // wall
+int line= 100;// line value
+int count= 0; //counter
+
+
+int main()
+{
+	forward();
+	msleep(xl_long_p);
+	ao();
+	turn_r();
+	getwall();
+	ao();
+	forward();
+	msleep(long_p);
+	ao();
+	followwall();
+	ao();
+	
+	printf("Hello, World!\n");
+	return 0;
+}
+
+//FUNCTION DEFINITIONS//
+void forward(){
+    printf("moving forward\n");
+    motor(r_motor,speed);
+    motor(l_motor,speed);
+}
+void turn_r(){
+	 printf("turning right\n");
+     motor(r_motor,reverse);
+     motor(l_motor,speed);
+     msleep(short_p);
+     ao();   //all off
+}
+void spin(){
+     printf("turning left left\n");
+     motor(r_motor,speed);
+     motor(l_motor,reverse);
+     msleep(long_p);
+     ao();   //all off
+}
+void getwall(){  
+        while(digital(r_bump)==no_front){
+          forward();//move both forward
+        if(digital(r_bump)==front){
+            spin(); //when it hits wall it will spin
+			break;
+        }
+        if(digital(l_bump)==front){
+            spin(); //when it hits wall it will spin
+			break;
+          }
+		if(analog(s_sensor)>200){
+			count++;
+			msleep(short_p);
+		}
+		if (count> 1){
+			veer_r();
+			count=0;
+		}
+        }
+		ao();
+	}
+void veer_r(){
+    printf("veering right\n");
+    motor(r_motor,speed2);
+    motor(l_motor,v_speed);
+    }
+void veer_l(){
+    printf("veering left\n");
+    motor(r_motor,v_speed);
+    motor(l_motor,speed2);
+    }
+void followwall(){  
+        while(digital(l_bump)==no_front){
+          forward();//move both forward
+        if(analog(s_sensor) >line){
+            veer_r(); // If it gets too close to the side, veers
+        }
+        if(analog(s_sensor) <line){
+            veer_l(); // If it gets to far it veers
+          }
+        }
+}
