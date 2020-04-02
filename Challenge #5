@@ -1,0 +1,79 @@
+// Created on Thu April 2 2020
+int l_motor= 0; //left motor
+int r_motor= 2; //right motor
+int s_sensor= 5; // side sensor
+int r_sensor= 6; //Left reflectance
+int speed= 50;  //speed
+int speed2= 20; //speed 2
+int v_speed= 100; //veer speed
+int r_bump= 9; //right bump
+int l_bump= 8; //left bump
+int reverse= -50;  //speed
+int short_p= 435; //Short pause
+int medium_p= 500; //medium pause
+int long_p= 850;  //long pause
+int xl_long_p= 1500;  //XL pause
+int no_front= 0; //No Wall
+int front= 1; // wall
+int line= 100;// line value
+int count= 0; //counter
+int r_range= 2; //Right range
+int wall=200; //wall value
+int tline=10000; //top line
+
+int main()
+{
+	followwall();
+	ao();
+	
+	printf("Hello, World!\n");
+	return 0;
+}
+//FUNCTION DEFINITIONS//
+void forward(){
+    printf("moving forward\n");
+    motor(r_motor,speed);
+    motor(l_motor,speed);
+}
+void spin(){
+     printf("turning left left\n");
+     motor(r_motor,speed);
+     motor(l_motor,reverse);
+     msleep(long_p);
+     ao();   //all off
+}
+void veer_r(){
+    printf("veering right\n");
+    motor(r_motor,speed2);
+    motor(l_motor,v_speed);
+    }
+void veer_l(){
+    printf("veering left\n");
+    motor(r_motor,v_speed);
+    motor(l_motor,speed2);
+    }
+void followwall(){  
+        while(analog(s_sensor)<=tline){
+	    printf("following wall\n");
+          forward();//move both forward
+        if(analog(r_range) >wall){
+            veer_r(); // If it gets too close to the side, veers
+        }
+        if(analog(r_range) <wall){
+            veer_l(); // If it gets to far it veers
+          }
+		if(analog(1)<=wall){
+			spin();
+		}
+		if(analog(r_sensor)>wall){
+			count++;
+			msleep(medium_p);
+		}
+		if (count> 3){
+			forward();
+			msleep(200);
+			break;
+		}
+
+        }
+}
