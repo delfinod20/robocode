@@ -1,0 +1,39 @@
+// Created on Mon April 6 2020
+int l_motor= 0; //left motor
+int r_motor= 2; //right motor
+int speed= 50;  //speed
+int reverse= -50;  //speed
+int short_p= 435; //Short pause
+int medium_p= 500; //medium pause
+int long_p= 1000;  //long pause
+int xl_long_p= 1500;  //XL pause
+
+
+
+int main()
+{
+	for(int corvette=0; corvette<=6; corvette++){
+		printf("corvette is %d\n", corvette);
+		forward();
+		msleep(xl_long_p);
+		ao();
+		spin();
+		
+		}
+	printf("Hello, World!\n");
+	return 0;
+	}
+	
+//Function Definitions//
+void forward(){
+    printf("moving forward\n");
+    motor(r_motor,speed);
+    motor(l_motor,speed);
+}
+void spin(){
+     printf("turning left left\n");
+     motor(r_motor,speed);
+     motor(l_motor,reverse);
+     msleep(long_p);
+     ao();   //all off
+}
